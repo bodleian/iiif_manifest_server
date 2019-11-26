@@ -6,4 +6,4 @@ pep257:
   run: false
 
 mypy:
-  run: true
+  run: false
