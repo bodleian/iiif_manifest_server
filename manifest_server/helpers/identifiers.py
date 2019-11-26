@@ -1,14 +1,16 @@
 from typing import List, Dict, Any
 
+IIIF_CONTEXT_STR: str = "http://iiif.io/api/presentation/{iiif_version}/context.json"
+IIIF_DISCOVERY_STR: str = "http://iiif.io/api/discovery/0/context.json"
 
-IIIF_V2_CONTEXT: str = "http://iiif.io/api/presentation/2/context.json"
+IIIF_V2_CONTEXT: str = IIIF_CONTEXT_STR.format(iiif_version=2)
 IIIF_V3_CONTEXT: List = [
     "http://www.w3.org/ns/anno.jsonld",
-    "http://iiif.io/api/presentation/3/context.json"
+    IIIF_CONTEXT_STR.format(iiif_version=3)
 ]
 
 IIIF_ASTREAMS_CONTEXT: List = [
-    "http://iiif.io/api/discovery/0/context.json",
+    IIIF_DISCOVERY_STR,
     "https://www.w3.org/ns/activitystreams"
 ]
 
