@@ -1,0 +1,21 @@
+common:
+  debug: yes
+  thumbsize: 256
+
+solr:
+  server: http://localhost:8983/solr/manifest_server
+  pagesize: 100
+
+templates:
+  manifest_id_tmpl: "{scheme}://{host}/iiif/manifest/{identifier}.json"
+  image_id_tmpl: "{scheme}://{host}/iiif/image/{identifier}"
+  canvas_id_tmpl: "{scheme}://{host}/iiif/canvas/{identifier}.json"
+  sequence_id_tmpl: "{scheme}://{host}/iiif/sequence/{identifier}_default.json"
+  range_id_tmpl: "{scheme}://{host}/iiif/range/{identifier}/{range}"
+  digital_bodleian_permalink_tmpl: "{scheme}://digital.bodleian.ox.ac.uk/inquire/p/{identifier}"
+  annopage_id_tmpl: "{scheme}://{host}/iiif/annotationpage/{identifier}.json"
+  annolist_id_tmpl: "{scheme}://{host}/iiif/annotationlist/{identifier}.json"
+  collection_id_tmpl: "{scheme}://{host}/iiif/collection/{identifier}"
+  annotation_id_tmpl: "{scheme}://{host}/iiif/annotation/{identifier}.json"
+  activitystream_id_tmpl: "{scheme}://{host}/iiif/activity/{identifier}"
+  activitystream_create_id_tmpl: "{scheme}://{host}/iiif/activity/create/{identifier}"

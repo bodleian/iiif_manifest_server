@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config>
+    <luceneMatchVersion>8.0.0</luceneMatchVersion>
+    <lib dir="${solr.install.dir:../../../..}/dist/" regex="solr-analysis-extras-\d.*\.jar" />
+    <lib dir="${solr.install.dir:../../../..}/contrib/analysis-extras/lib" regex="icu4j-\d.*\.jar" />
+    <lib dir="${solr.install.dir:../../../..}/contrib/analysis-extras/lucene-libs" regex="lucene-analyzers-icu-\d.*\.jar" />
+
+    <dataDir>${solr.data.dir:}</dataDir>
+
+    <directoryFactory name="DirectoryFactory"
+            class="${solr.directoryFactory:solr.NRTCachingDirectoryFactory}" />
+
+    <codecFactory class="solr.SchemaCodecFactory" />
+    <schemaFactory class="ClassicIndexSchemaFactory" />
+
+    <indexConfig>
+        <lockType>${solr.lock.type:native}</lockType>
+    </indexConfig>
+
+    <jmx />
+
+    <updateHandler class="solr.DirectUpdateHandler2">
+        <updateLog>
+            <str name="dir">${solr.ulog.dir:}</str>
+            <int name="numVersionBuckets">${solr.ulog.numVersionBuckets:65536}</int>
+        </updateLog>
+        <autoCommit>
+            <maxTime>${solr.autoCommit.maxTime:15000}</maxTime>
+            <openSearcher>false</openSearcher>
+        </autoCommit>
+        <autoSoftCommit>
+            <maxTime>${solr.autoSoftCommit.maxTime:-1}</maxTime>
+        </autoSoftCommit>
+    </updateHandler>
+
+    <!-- auto-generate UUIDs when a document is indexed -->
+    <updateProcessor class="solr.UUIDUpdateProcessorFactory" name="uuid">
+        <str name="fieldName">id</str>
+    </updateProcessor>
+
+    <!-- auto-generate a timestamp when a document is indexed -->
+    <updateProcessor class="solr.TimestampUpdateProcessorFactory" name="auto-timestamp">
+        <str name="fieldName">indexed</str>
+    </updateProcessor>
+
+    <updateRequestProcessorChain name="process" default="true" processor="uuid,auto-timestamp">
+        <!-- copy people fields to a common string field so we can work with them easier. -->
+        <processor class="solr.CloneFieldUpdateProcessorFactory">
+            <arr name="source">
+                <str>creators_sm</str>
+                <str>contributors_sm</str>
+                <str>authors_sm</str>
+                <str>composers_sm</str>
+                <str>illustrators_sm</str>
+                <str>publishers_sm</str>
+                <str>printers_sm</str>
+                <str>translators_sm</str>
+                <str>editors_sm</str>
+                <str>scribes_sm</str>
+                <str>commentators_sm</str>
+                <str>annotators_sm</str>
+                <str>compilers_sm</str>
+                <str>engravers_sm</str>
+                <str>cartographers_sm</str>
+                <str>former_owners_sm</str>
+                <str>patrons_sm</str>
+                <str>photographers_sm</str>
+                <str>witnesses_sm</str>
+                <str>architects_sm</str>
+                <str>art_copyists_sm</str>
+                <str>artists_sm</str>
+                <str>after_artists_sm</str>
+                <str>attributed_artists_sm</str>
+                <str>follower_of_artists_sm</str>
+                <str>formerly_attributed_artists_sm</str>
+                <str>studio_of_artists_sm</str>
+                <str>school_of_artists_sm</str>
+                <str>draughtsmen_sm</str>
+                <str>sitters_sm</str>
+                <str>photography_studios_sm</str>
+            </arr>
+            <str name="dest">people_sm</str>
+        </processor>
+        <processor class="solr.CloneFieldUpdateProcessorFactory">
+            <arr name="source">
+                <str>shelfmark_s</str>
+                <str>origins_sm</str>
+                <str>people_sm</str>
+                <str>work_titles_sm</str>
+            </arr>
+            <str name="dest">suggest</str>
+        </processor>
+        <processor class="solr.CloneFieldUpdateProcessorFactory">
+            <arr name="source">
+                <str>shelfmark_s</str>
+                <str>catalogue_identifiers_sm</str>
+                <str>work_titles_sm</str>
+                <str>work_title_s</str>
+                <str>description_sm</str>
+                <str>languages_sm</str>
+                <str>origins_sm</str>
+                <str>title_s</str>
+                <str>people_sm</str>
+                <str>subjects_sm</str>
+                <str>hands_sm</str>
+                <str>collation_sm</str>
+                <str>former_holding_institution_sm</str>
+                <str>musical_notation_sm</str>
+                <str>origin_note_sm</str>
+                <str>religious_house_sm</str>
+                <str>related_items_sm</str>
+                <str>description_s</str>
+                <str>name_s</str>
+            </arr>
+            <str name="dest">text</str>
+        </processor>
+        <processor class="solr.UniqFieldsUpdateProcessorFactory">
+            <str name="fieldName">suggest</str>
+            <str name="fieldName">text</str>
+            <str name="fieldName">people_sm</str>
+        </processor>
+        <processor class="solr.LogUpdateProcessorFactory" />
+        <processor class="solr.RunUpdateProcessorFactory" />
+    </updateRequestProcessorChain>
+
+    <query>
+        <maxBooleanClauses>1024</maxBooleanClauses>
+        <filterCache class="solr.FastLRUCache"
+                size="512"
+                initialSize="512"
+                autowarmCount="256" />
+        <queryResultCache class="solr.LRUCache"
+                size="4096"
+                initialSize="1024"
+                autowarmCount="512" />
+        <documentCache class="solr.LRUCache"
+                size="4096"
+                initialSize="1024"
+                autowarmCount="512" />
+        <cache name="perSegFilter"
+                class="solr.search.LRUCache"
+                size="10"
+                initialSize="0"
+                autowarmCount="10"
+                regenerator="solr.NoOpRegenerator" />
+        <enableLazyFieldLoading>true</enableLazyFieldLoading>
+        <queryResultWindowSize>20</queryResultWindowSize>
+        <queryResultMaxDocsCached>200</queryResultMaxDocsCached>
+        <listener event="newSearcher" class="solr.QuerySenderListener">
+            <arr name="queries">
+            </arr>
+        </listener>
+        <listener event="firstSearcher" class="solr.QuerySenderListener">
+            <arr name="queries">
+            </arr>
+        </listener>
+        <useColdSearcher>false</useColdSearcher>
+    </query>
+
+    <requestDispatcher handleSelect="false">
+        <requestParsers enableRemoteStreaming="true"
+                multipartUploadLimitInKB="2048000"
+                formdataUploadLimitInKB="2048"
+                addHttpRequestToContext="false" />
+        <httpCaching never304="true" />
+
+    </requestDispatcher>
+
+    <requestHandler name="/select" class="solr.SearchHandler">
+        <lst name="defaults">
+            <str name="echoParams">explicit</str>
+            <int name="rows">20</int>
+            <str name="q.op">AND</str>
+            <str name="df">text</str>
+            <str name="wt">json</str>
+            <str name="defType">edismax</str>
+            <str name="qf">text people_al^3.0 description_ft^1.6 work_titles_ft^1.5 shelfmark_ft^2 title_ft^1.3 surfaces_ft^0.5</str>
+            <!-- be a bit naughty and slightly boost complete digitizations over partial ones. -->
+            <str name="bq">completeness_s:complete^10</str>
+            <int name="ps">2</int>
+            <str name="spellcheck">true</str>
+            <str name="spellcheck.collate">true</str>
+            <str name="spellcheck.alternativeTermCount">2</str>
+            <str name="spellcheck.maxCollations">1</str>
+            <str name="spellcheck.maxCollationTries">5</str>
+            <str name="spellcheck.maxResultsForSuggest">2</str>
+            <str name="spellcheck.accuracy">0.6</str>
+        </lst>
+        <lst name="appends">
+            <!-- /select searches will not include items in the 'talbot' silo -->
+            <str name="fq">NOT silo_s:"/silos/talbot_raisonne/"</str>
+        </lst>
+        <arr name="last-components">
+            <str>spellcheck</str>
+        </arr>
+    </requestHandler>
+
+    <!-- A search handler tuned for use by the manifest server and image resolver.
+         It doesn't exclude talbot files and doesn't do spellchecking -->
+    <requestHandler name="/iiif" class="solr.SearchHandler">
+        <lst name="defaults">
+            <str name="echoParams">explicit</str>
+            <str name="df">text</str>
+            <str name="wt">json</str>
+        </lst>
+    </requestHandler>
+
+    <requestHandler name="/query" class="solr.SearchHandler">
+        <lst name="defaults">
+            <str name="echoParams">explicit</str>
+            <str name="wt">json</str>
+            <str name="indent">true</str>
+            <str name="df">text</str>
+        </lst>
+    </requestHandler>
+
+    <searchComponent name="spellcheck" class="solr.SpellCheckComponent">
+        <str name="queryAnalyzerFieldType">text_spell</str>
+        <lst name="spellchecker">
+            <str name="name">default</str>
+            <str name="classname">solr.DirectSolrSpellChecker</str>
+            <str name="distanceMeasure">org.apache.lucene.search.spell.LuceneLevenshteinDistance</str>
+            <str name="comparatorClass">score</str>
+            <int name="maxEdits">1</int>
+            <int name="minPrefix">1</int>
+            <int name="minQueryLength">3</int>
+            <str name="field">spell_sp</str>
+            <str name="buildOnCommit">true</str>
+        </lst>
+    </searchComponent>
+
+    <searchComponent name="suggest" class="solr.SuggestComponent">
+        <lst name="suggester">
+            <str name="name">DigitalBodleianSuggester</str>
+            <!-- Blended Infix seemed to perform the best -->
+            <str name="lookupImpl">BlendedInfixLookupFactory</str>
+            <str name="dictionaryImpl">DocumentDictionaryFactory</str>
+            <!-- every result will have the phrase and a 'payload' field which
+                 can be used to identify the record a phrase comes from, or provide a
+                 link directly to the record, etc. It is set to shelfmark so that we can
+                 potentially display the shelfmark of the record in the suggestion itself -->
+            <str name="payloadField">full_shelfmark_s</str>
+            <!-- highlighting didn't always work... -->
+            <str name="highlight">false</str>
+            <!-- a context field allows you to restrict the results to a certain query - a bit like
+                 a filter field for suggestions. For example, 'suggest.q=foo&suggest.cfq=object' would
+                 mean "get suggestions for the query "foo" only from documents where type=object. -->
+            <str name="contextField">type</str>
+            <!-- the field to take the suggestions from. -->
+            <str name="field">suggest</str>
+            <!-- use the text_suggest field type for queries -->
+            <str name="suggestAnalyzerFieldType">text_analyzed</str>
+            <!-- it's best if the suggester is manually built (nightly?) since otherwise it would slow down
+                 any restarts -->
+            <str name="buildOnStartup">false</str>
+        </lst>
+    </searchComponent>
+
+    <requestHandler name="/suggest" class="solr.SearchHandler" startup="lazy">
+        <lst name="defaults">
+            <str name="suggest.dictionary">DigitalBodleianSuggester</str>
+            <str name="suggest">true</str>
+            <str name="suggest.count">5</str>
+        </lst>
+        <arr name="components">
+            <str>suggest</str>
+        </arr>
+    </requestHandler>
+
+    <requestHandler name="/mlt" class="solr.MoreLikeThisHandler">
+        <lst name="defaults">
+            <str name="mlt.qf">title_al^1.6 people_al^2.0 description_ft^1.2 shelfmark_ft^2.0</str>
+            <str name="mlt.fl">text,text_al,title_al,people_al,collections_ft,description_ft,shelfmark_ft</str>
+            <int name="mlt.mintf">1</int>
+            <int name="mlt.maxdfpct">10</int>
+            <int name="mlt.mindf">1</int>
+            <int name="mlt.minwl">5</int>
+            <int name="rows">5</int>
+            <str name="mlt.interestingTerms">details</str>
+            <str name="mlt.boost">true</str>
+        </lst>
+    </requestHandler>
+</config>

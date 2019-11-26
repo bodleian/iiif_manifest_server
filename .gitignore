@@ -1,0 +1,9 @@
+__pycache__
+.mypy_cache
+.venv
+.pytest_cache
+configuration.yml
+/.coverage
+/htmlcov
+venv
+manifest_server.iml

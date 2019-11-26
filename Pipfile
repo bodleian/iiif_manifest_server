@@ -1,0 +1,29 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pysolr = "*"
+sanic = "*"
+gunicorn = "*"
+serpy = "*"
+pyyaml = ">=5.1"
+sentry-sdk = "*"
+aiocontextvars = "*"
+uvloop = "*"
+contextvars = "*"
+
+[dev-packages]
+pytest = "*"
+pytest-cov = "*"
+aiohttp = "*"
+idna-ssl = "*"
+cchardet = "*"
+aiodns = "*"
+ipython = "*"
+tripoli = "*"
+prospector = {extras = ["with_mypy"],version = "*"}
+
+[requires]
+python_version = "3"

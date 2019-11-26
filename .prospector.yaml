@@ -1,0 +1,9 @@
+strictness: medium
+test-warnings: true
+doc-warnings: false
+
+pep257:
+  run: false
+
+mypy:
+  run: true
