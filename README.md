@@ -58,7 +58,7 @@ Other features that may be useful include handling of content negotiation (see `
 and our implementation of ActivityStreams and IIIF collections. Feel free to borrow as needed, or simply browse out of 
 interest.
 
-It uses Serpy as the Python microframework. If that doesn't work for you the code for managing request and for doing 
+It uses Sanic as the Python microframework. If that doesn't work for you the code for managing request and for doing 
 the actual processing is fairly well separated, and swapping out a different framework should not be a particularly 
 onerous task. (The most likely source of difficulty will be figuring out how the different frameworks handle incoming 
 request patterns and request headers.)
